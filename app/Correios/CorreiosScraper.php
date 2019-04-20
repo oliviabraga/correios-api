@@ -28,9 +28,9 @@ class CorreiosScraper
      * ou um array vazio se não houver informações ou CEP não for encontrado.
      *
      * @param $cep
-     * @return array de ceps correspontes à pesquisa
+     * @return array de entradas correspontes ao CEP informado
      */
-    public function getCep($cep)
+    public function getCepInfo($cep)
     {
         $headers = [];
         $values = [];
@@ -43,17 +43,35 @@ class CorreiosScraper
 
         $resultPage = $this->client->submit($form);
 
-        $resultPage->filter('.tmptabela tr th')->each(function (Crawler $node) use (&$headers) {
-            $headers[] = trim(strip_tags($node->html()));
-        });
+        $allLines = $resultPage->filter('.tmptabela tr');
+        $lineCount = $allLines->count();
 
-        $resultPage->filter('.tmptabela tr td')->each(function (Crawler $node) use (&$values) {
-            $values[] = trim($node->html());
-        });
+        for ($lineIndex = 0; $lineIndex < $lineCount; $lineIndex++) {
+            $line = $allLines->eq($lineIndex);
 
-        $result = array_combine($headers, $values);
+            $allColumns = $line->children();
+            $columnCount = $allColumns->count();
 
-        return empty($result) ? [] : $result;
+            $address = [];
+
+            for ($columnIndex = 0; $columnIndex < $columnCount; $columnIndex++) {
+                $column = $allColumns->eq($columnIndex);
+                $columnTagName = $column->getNode(0)->tagName;
+                $columnText = $column->text();
+
+                if ($columnTagName === 'th') {
+                    $headers[] = $columnText;
+                } else if ($columnTagName === 'td') {
+                    $address[ $headers[$columnIndex] ] = $columnText;
+                }
+            }
+
+            if (!empty($address)) {
+                $values[] = $address;
+            }
+        }
+
+        return empty($values) ? [] : $values;
     }
 
 }
