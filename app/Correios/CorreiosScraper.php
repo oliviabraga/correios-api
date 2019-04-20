@@ -23,6 +23,13 @@ class CorreiosScraper
         $this->client->setClient($guzzleClient);
     }
 
+    /**
+     * Pega informações do CEP no site dos correios e devolve um array de endereços com as informações
+     * ou um array vazio se não houver informações ou CEP não for encontrado.
+     *
+     * @param $cep
+     * @return array de ceps correspontes à pesquisa
+     */
     public function getCep($cep)
     {
         $headers = [];
@@ -46,7 +53,7 @@ class CorreiosScraper
 
         $result = array_combine($headers, $values);
 
-        return empty($result) ? null : $result;
+        return empty($result) ? [] : $result;
     }
 
 }

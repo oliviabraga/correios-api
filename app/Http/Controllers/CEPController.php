@@ -18,6 +18,10 @@ class CEPController extends Controller
 
     public function getCep($cep)
     {
-        return $this->correios->getCep($cep);
+        $cepInfo = $this->correios->getCep($cep);
+
+        $status = empty($cepInfo) ? 404 : 200;
+
+        return response()->json($cepInfo, $status);
     }
 }
