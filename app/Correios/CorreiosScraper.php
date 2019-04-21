@@ -64,7 +64,7 @@ class CorreiosScraper
                 if ($columnTagName === 'th') {
                     $headers[] = $columnText;
                 } else if ($columnTagName === 'td') {
-                    $address[ $headers[$columnIndex] ] = $columnText;
+                    $address[ $headers[$columnIndex] ] = trim($columnText, chr(0xC2).chr(0xA0));
                 }
             }
 
