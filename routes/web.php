@@ -12,5 +12,6 @@
 */
 
 $router->group(['prefix' => 'api'], function () use ($router) {
-    $router->get('/cep', 'CEPController@getCep');
+    $router->get('/cep', 'CorreiosController@getCep');
+    $router->get('/rastreio', 'CorreiosController@getPackageInfo');
 });

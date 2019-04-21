@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Correios\CorreiosScraper;
 use Illuminate\Http\Request;
 
-class CEPController extends Controller
+class CorreiosController extends Controller
 {
     /**
      * @var CorreiosScraper
@@ -30,5 +30,10 @@ class CEPController extends Controller
         $status = empty($cepInfo) ? 404 : 200;
 
         return response()->json($cepInfo, $status);
+    }
+
+    public function getPackageInfo(Request $request)
+    {
+        return $this->correios->getPackageInfo('LS814040196CH');
     }
 }

@@ -9,7 +9,8 @@ use Symfony\Component\DomCrawler\Crawler;
 class CorreiosScraper
 {
 
-    const SITE_URL = 'http://www.buscacep.correios.com.br/sistemas/buscacep/buscaCepEndereco.cfm';
+    const CORREIOS_CEP_URL = 'http://www.buscacep.correios.com.br/sistemas/buscacep/buscaCepEndereco.cfm';
+    const CORREIOS_PACKAGE_URL = 'https://www2.correios.com.br/sistemas/rastreamento/';
     const CEP_FORM_SELECTOR = '#Geral';
 
     private $client;
@@ -37,7 +38,7 @@ class CorreiosScraper
         $headers = [];
         $values = [];
 
-        $crawler = $this->client->request('GET', self::SITE_URL);
+        $crawler = $this->client->request('GET', self::CEP_URL);
 
         $form = $crawler->selectButton('Buscar')->form();
 
@@ -74,6 +75,27 @@ class CorreiosScraper
         }
 
         return empty($values) ? [] : $values;
+    }
+
+    /**
+     * Busca informações do pacote a partir do código de rastreamento informado
+     *
+     * @param $trackingCode string código de rastreio
+     * @return string histórico do pacote
+     */
+    public function getPackageInfo($trackingCode)
+    {
+        $crawler = $this->client->request('GET', self::CORREIOS_PACKAGE_URL);
+
+        $form = $crawler->selectButton('Buscar')->form();
+
+        $form['objetos'] = $trackingCode;
+
+        $resultPage = $this->client->submit($form);
+
+        $data = $resultPage->filter('.listEvent')->html();
+
+        return $data;
     }
 
 }
