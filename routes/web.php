@@ -12,5 +12,5 @@
 */
 
 $router->group(['prefix' => 'api'], function () use ($router) {
-    $router->get('/cep/{cep}', 'CEPController@getCep');
+    $router->get('/cep', 'CEPController@getCep');
 });

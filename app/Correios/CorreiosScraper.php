@@ -25,12 +25,14 @@ class CorreiosScraper
 
     /**
      * Pega informações do CEP no site dos correios e devolve um array de endereços com as informações
-     * ou um array vazio se não houver informações ou CEP não for encontrado.
+     * ou um array vazio se não houver informações ou CEP não for encontrado. Em vez do CEP, também pode ser
+     * informado o logradouro, bairro ou outro tipo de pesquisa por nome, os endereços correspondentes (com CEP)
+     * serão devolvidos.
      *
-     * @param $cep
+     * @param $query string que pode ser um CEP, endereço, bairro etc.
      * @return array de entradas correspontes ao CEP informado
      */
-    public function getCepInfo($cep)
+    public function getCepInfo($query)
     {
         $headers = [];
         $values = [];
@@ -39,7 +41,7 @@ class CorreiosScraper
 
         $form = $crawler->selectButton('Buscar')->form();
 
-        $form['relaxation'] = $cep;
+        $form['relaxation'] = $query;
 
         $resultPage = $this->client->submit($form);
 
