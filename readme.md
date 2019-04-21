@@ -1,6 +1,6 @@
 # 📨 Correios API
 
-API para obter informações de CEP e localização de pacotes do dos correios do Brasil.
+API para obter informações de CEP e localização de pacotes dos correios do Brasil.
 
 ## Instalação 
 
