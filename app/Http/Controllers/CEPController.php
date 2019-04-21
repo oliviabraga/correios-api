@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Correios\CorreiosScraper;
+use Illuminate\Http\Request;
 
 class CEPController extends Controller
 {
@@ -16,9 +17,15 @@ class CEPController extends Controller
         $this->correios = $correios;
     }
 
-    public function getCep($cep)
+    public function getCep(Request $request)
     {
-        $cepInfo = $this->correios->getCepInfo($cep);
+        $query = $request->query('busca', '');
+
+        if ($query === '') {
+            return response('', 400);
+        }
+
+        $cepInfo = $this->correios->getCepInfo($query);
 
         $status = empty($cepInfo) ? 404 : 200;
 
