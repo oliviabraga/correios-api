@@ -65,7 +65,7 @@ class CorreiosScraper
                 if ($columnTagName === 'th') {
                     $headers[] = $columnText;
                 } else if ($columnTagName === 'td') {
-                    $address[ $headers[$columnIndex] ] = trim($columnText, chr(0xC2).chr(0xA0));
+                    $address[ $headers[$columnIndex] ] = trim($columnText, self::getUTFSpace());
                 }
             }
 
@@ -81,10 +81,11 @@ class CorreiosScraper
      * Busca informações do pacote a partir do código de rastreamento informado
      *
      * @param $trackingCode string código de rastreio
-     * @return string histórico do pacote
+     * @return array
      */
     public function getPackageInfo($trackingCode)
     {
+        $events = [];
         $crawler = $this->client->request('GET', self::CORREIOS_PACKAGE_URL);
 
         $form = $crawler->selectButton('Buscar')->form();
@@ -93,9 +94,75 @@ class CorreiosScraper
 
         $resultPage = $this->client->submit($form);
 
-        $data = $resultPage->filter('.listEvent')->html();
+        $allLines = $resultPage->filter('.listEvent tr');
+        $lineCount = $allLines->count();
 
-        return $data;
+        for ($lineIndex = 0; $lineIndex < $lineCount; $lineIndex++) {
+            $line = $allLines->eq($lineIndex);
+
+            $event = [];
+
+            $dateEvent = $line->filter('.sroDtEvent');
+            $dateEventText = $dateEvent->text();
+
+            preg_match('/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/', $dateEventText, $matches);
+
+            $event['date'] = $matches[0];
+
+            preg_match('/[0-9]{2}\:[0-9]{2}/', $dateEventText, $matches);
+
+            $event['time'] = $matches[0];
+
+            $innerLabel = $dateEvent->filter('label');
+
+            if ( $innerLabel->count() ) {
+                $event['location'] = $innerLabel->text();
+            } else {
+                $event['location'] = explode('<br>', $dateEvent->html())[2];
+            }
+
+            $event['location'] = self::sanitizeIrregularSpaces($event['location']);
+
+            $event['title'] = $line->filter('.sroLbEvent strong')->text();
+
+            $rawDescription = $line->filter('.sroLbEvent')->text();
+
+            $event['description'] = self::sanitizeIrregularSpaces($rawDescription);
+
+            $events[] = $event;
+        }
+
+        return $events;
+    }
+
+    /**
+     * Devolve a representação de um espaço em UTF
+     *
+     * @return string
+     */
+    private static function getUTFSpace()
+    {
+        return chr(0xC2).chr(0xA0);
+    }
+
+    /**
+     * "Sanea" uma string de acordo com espaços irregulares: uso excessivo de quebras de linha, espaços utf
+     * e trim a string
+     *
+     * @param $str
+     * @return string string saneada
+     */
+    private static function sanitizeIrregularSpaces($str)
+    {
+        $newLinesToRemove = ["\r\n", "\t", "\r", "\n", self::getUTFSpace()];
+
+        $finalStr = trim(str_replace($newLinesToRemove, ' ', $str));
+
+        $finalStr = preg_replace('!\s+!', ' ', $finalStr);
+
+        $finalStr = trim(trim($finalStr, '/'));
+
+        return $finalStr;
     }
 
 }
