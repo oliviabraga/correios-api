@@ -65,7 +65,7 @@ class CorreiosScraper
                 if ($columnTagName === 'th') {
                     $headers[] = $columnText;
                 } else if ($columnTagName === 'td') {
-                    $address[ $headers[$columnIndex] ] = trim($columnText, self::getUTFSpace());
+                    $address[ $headers[$columnIndex] ] = self::sanitizeIrregularSpaces($columnText);
                 }
             }
 
@@ -123,7 +123,15 @@ class CorreiosScraper
 
             $event['location'] = self::sanitizeIrregularSpaces($event['location']);
 
-            $event['title'] = $line->filter('.sroLbEvent strong')->text();
+            $strong = $line->filter('.sroLbEvent strong');
+
+            if ($strong->count()) {
+                $event['title'] = $strong->text();
+            } else {
+                $event['title'] = strip_tags($line->filter('.sroLbEvent')->html());
+            }
+
+            $event['title'] = self::sanitizeIrregularSpaces($event['title']);
 
             $rawDescription = $line->filter('.sroLbEvent')->text();
 
@@ -136,23 +144,13 @@ class CorreiosScraper
     }
 
     /**
-     * Devolve a representação de um espaço em UTF
-     *
-     * @return string
-     */
-    private static function getUTFSpace()
-    {
-        return chr(0xC2).chr(0xA0);
-    }
-
-    /**
      * "Sanea" uma string de acordo com espaços irregulares: uso excessivo de quebras de linha, espaços utf
      * e trim a string
      *
      * @param $str
      * @return string string saneada
      */
-    private static function sanitizeIrregularSpaces($str)
+    protected static function sanitizeIrregularSpaces($str)
     {
         $newLinesToRemove = ["\r\n", "\t", "\r", "\n", self::getUTFSpace()];
 
@@ -163,6 +161,16 @@ class CorreiosScraper
         $finalStr = trim(trim($finalStr, '/'));
 
         return $finalStr;
+    }
+
+    /**
+     * Devolve a representação de um espaço em UTF
+     *
+     * @return string
+     */
+    private static function getUTFSpace()
+    {
+        return chr(0xC2).chr(0xA0);
     }
 
 }

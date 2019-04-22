@@ -34,6 +34,16 @@ class CorreiosController extends Controller
 
     public function getPackageInfo(Request $request)
     {
-        return $this->correios->getPackageInfo('LS814040196CH');
+        $query = $request->query('busca', '');
+
+        if ($query === '') {
+            return response('', 400);
+        }
+
+        $packageInfo = $this->correios->getPackageInfo($query);
+
+        $status = empty($packageInfo) ? 404 : 200;
+
+        return response()->json($packageInfo, $status);
     }
 }
