@@ -25,11 +25,11 @@ _(com [cURL](https://curl.haxx.se/))_
 
 Para procurar por CEP, endereço ou bairro basta realizar uma requisição `GET` ao endpoint de CEP:
 
-`curl http://localhost:8989/api/cep/?busca=00000000`
+`curl http://localhost:8080/api/cep/?busca=00000000`
 
 ou
  
-`curl http://localhost:8989/api/cep/?busca=Rua%20Alguma%20Coisa`
+`curl http://localhost:8080/api/cep/?busca=Rua%20Alguma%20Coisa`
 
 Caso haja resultados, você terá um array de informações no formato:
 
@@ -46,7 +46,7 @@ Caso haja resultados, você terá um array de informações no formato:
 
 Para obter o histórico de um pacote dos correios (rastreamento), basta realizar uma requisição `GET` ao endpoint de rastreio:
 
-`curl http://localhost:8989/api/track/?busca=CODIGO`
+`curl http://localhost:8080/api/track/?busca=CODIGO`
 
 Onde `CODIGO` é o código de rastreio do objeto.
 
