@@ -1,16 +1,10 @@
 # 📨 Correios API
 
-API para obter informações de CEP e localização de pacotes dos correios do Brasil.
+API para obter informações de CEP e localização de pacotes dos Correios do Brasil.
 
-## Instalação 
+## Setup 
 
-- Após clonar/baixar o projeto, gere o arquivo .env:
-
-`php -r "file_exists('.env') || copy('.env.example', '.env');"`
-
-- Edite o arquivo `.env` e coloque os dados de acesso ao banco nas vars que começam com `DB_`
-
-- Em seguida instale as dependências com o [composer](https://getcomposer.org/):
+- Após clonar/baixar o projeto, instale as dependências com o [composer](https://getcomposer.org/):
 
 `composer install`
 
@@ -25,13 +19,15 @@ _(com [cURL](https://curl.haxx.se/))_
 
 Para procurar por CEP, endereço ou bairro basta realizar uma requisição `GET` ao endpoint de CEP:
 
-`curl http://localhost:8080/api/cep/?busca=00000000`
+`curl http://localhost:8080/api/v0/cep/12345678`
 
 ou
- 
-`curl http://localhost:8080/api/cep/?busca=Rua%20Alguma%20Coisa`
 
-Caso haja resultados, você terá um array de informações no formato:
+`http://localhost:8080/api/v0/cep/Rua%20Alguma%20Coisa`
+
+Onde a pesquisa pode ser feita por CEP ou logradouro.
+
+Então você terá um array de:
 
 ```json
 {
@@ -44,13 +40,13 @@ Caso haja resultados, você terá um array de informações no formato:
 
 ### Rastreamento
 
-Para obter o histórico de um pacote dos correios (rastreamento), basta realizar uma requisição `GET` ao endpoint de rastreio:
+Para obter o histórico de um pacote dos Correios, basta realizar uma requisição `GET` ao endpoint de rastreio:
 
-`curl http://localhost:8080/api/track/?busca=CODIGO`
+`curl http://localhost:8080/api/v0/track/BR123123`
 
-Onde `CODIGO` é o código de rastreio do objeto.
+Onde `BR123123` é o código de rastreio do objeto.
 
-Caso haja resultados, você terá um array de informações no formato:
+Então você terá um array de:
 
 ```json
 {   
@@ -68,7 +64,8 @@ Serão sempre bem vindas, desde que venham PR de outro branch criado a partir de
 
 ## Créditos
 
-Esse projeto é possível graças ao [Lumen](https://lumen.laravel.com/)
+- [Slim](http://www.slimframework.com)
+- [Goutte](https://github.com/FriendsOfPHP/Goutte)
 
 ## Considerações
 
