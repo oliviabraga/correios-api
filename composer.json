@@ -5,7 +5,8 @@
     "license": "MIT",
     "type": "project",
     "require": {
-        "slim/slim": "^3.12"
+        "slim/slim": "^3.12",
+        "fabpot/goutte": "^3.2"
     },
     "autoload": {
         "psr-4": {
