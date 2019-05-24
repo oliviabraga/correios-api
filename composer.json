@@ -1,7 +1,7 @@
 {
     "name": "andersonmadeira/correios-api",
     "description": "API para obter informações de CEP 📨 e localização de encomendas 📦",
-    "keywords": ["correios", "api", "php"],
+    "keywords": ["correios", "api", "php", "rest"],
     "license": "MIT",
     "type": "project",
     "require": {
